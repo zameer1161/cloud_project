@@ -1,16 +1,13 @@
 <?php
-// config.php
+$host     = getenv('DB_HOST');
+$user     = getenv('DB_USER');
+$password = getenv('DB_PASSWORD');
+$database = getenv('DB_NAME');
+$port     = getenv('DB_PORT') ?: 3306;
 
-$host = "localhost";   // Database host
-$db   = "attendance_db"; // Database name
-$user = "root";        // Database username
-$pass = "";            // Database password
+$conn = @mysqli_connect($host, $user, $password, $database, (int)$port);
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
-    // Set common PDO options
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Database Connection Failed: " . $e->getMessage());
+if (!$conn) {
+    die("DB connection failed: " . mysqli_connect_error());
 }
+?>
