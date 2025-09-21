@@ -1,21 +1,21 @@
 <?php
 $host = getenv("DB_HOST");
-$username = getenv("DB_USERNAME");
+$user = getenv("DB_USER");   // FIXED: Azure variable is DB_USER, not DB_USERNAME
 $password = getenv("DB_PASSWORD");
 $dbname = getenv("DB_NAME");
 $port = getenv("DB_PORT");
 
-// Path to Azure CA certificate
-$cert = "/var/www/html/DigiCertGlobalRootCA.crt.pem";
+// Path to CA certificate inside Azure
+$cert = "/home/site/wwwroot/DigiCertGlobalRootCA.crt.pem";
 
-// Create connection
+// Init MySQLi
 $conn = mysqli_init();
+
+// Configure SSL with CA cert
 mysqli_ssl_set($conn, NULL, NULL, $cert, NULL, NULL);
 
-// Turn off server cert validation if needed
-mysqli_real_connect($conn, $host, $username, $password, $dbname, $port, MYSQLI_CLIENT_SSL);
-
-if (mysqli_connect_errno()) {
+// Connect with SSL
+if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
     die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 ?>
